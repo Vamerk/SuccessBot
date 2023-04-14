@@ -31,28 +31,48 @@ async def bot_start(message: types.Message):
 @dp.message_handler(commands=['top'])
 async def top_users(message: types.Message):
     text = Top_list.rating()
-    await bot.send_message(message.chat.id, text=f'Топ пользователей:\n'
-                                                 f'{text}')
+    await bot.send_photo(message.chat.id, photo=open(f'Image/top_users.jpg', 'rb'), caption=f'*🔝Топ пользователей🔝*\n\n'
+                                                 f'{text}', parse_mode="MarkDownV2")
 
 
 @dp.message_handler(commands=['help'])
 async def top_users(message: types.Message):
-    help_text = f'/start - Запустить/обновить бота\n' \
-                f'/top - Топ пользователей\n' \
-                f'/info - Информация о персонаже\n' \
-                f'/help - Помощь по боту/список команд'
+    help_text = f'/start - 🏁Запустить/обновить бота\n' \
+                f'/top - 🔥Топ пользователей\n' \
+                f'/info - ❗️Информация о своем персонаже\n' \
+                f'/info (user_id) - ❗️Информация о чужом персонаже\n' \
+                f'/help - ❓Помощь по боту/список команд\n'
 
-    await bot.send_message(message.chat.id, text=f'Список команд:\n'
-                                                 f'{help_text}')
+    await bot.send_photo(message.chat.id, photo=open(f'Image/help_photo.jpg', 'rb'),
+                         caption=f'<b>❗️Список основных команд❗️</b>\n\n'
+                                 f'{help_text}', parse_mode="HTML")
 
 
 @dp.message_handler(commands=['info'])
 async def top_users(message: types.Message):
-    pers = Person(message.from_user.id)
-    await bot.send_photo(message.chat.id,
-                         photo=open(f'Person_image/user_image/user-{message.from_user.id}.png', 'rb'),
-                         caption=f'Имя: {pers.Name()}\n'
-                                 f'Деньги: {pers.Money()}\n'
-                                 f'Здоровье: {pers.Health()}\n'
-                                 f'Сила: {pers.Stamina()}\n'
-                                 f'Уровень: {pers.Level()}\n', reply_markup=types.ReplyKeyboardRemove())
+    if message.get_args():
+        args = message.get_args()
+        if not check_and_add_user(con, args):
+            pers = Person(args)
+            await bot.send_photo(message.chat.id,
+                                 photo=open(f'Person_image/user_image/user-{args}.png', 'rb'),
+                                 caption=f'Имя: {pers.Name()}\n'
+                                         f'Деньги: {pers.Money()}\n'
+                                         f'Здоровье: {pers.Health()}\n'
+                                         f'Сила: {pers.Stamina()}\n'
+                                         f'Уровень: {pers.Level()}\n', reply_markup=keyboards.users_board.Interaction)
+
+
+        else:
+            await bot.send_message(message.chat.id,
+                                   text=f'Такого у нас нет, возможно вы ошиблись. Попробуйте ввести другой ID')
+
+    else:
+        pers = Person(message.from_user.id)
+        await bot.send_photo(message.chat.id,
+                             photo=open(f'Person_image/user_image/user-{message.from_user.id}.png', 'rb'),
+                             caption=f'Имя: {pers.Name()}\n'
+                                     f'Деньги: {pers.Money()}\n'
+                                     f'Здоровье: {pers.Health()}\n'
+                                     f'Сила: {pers.Stamina()}\n'
+                                     f'Уровень: {pers.Level()}\n')

@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters.builtin import CommandStart
 
 from app import con
 from loader import dp, bot
-
+import keyboards
 from Person import NewPerson, Person
 
 
@@ -13,7 +13,7 @@ async def dd_message(message: types.Message):
         NewPerson(message.from_user.id)
         await bot.send_photo(message.chat.id,
                              photo=open(f'Person_image/user_image/user-{message.from_user.id}.png', 'rb'))
-        await message.answer(text=f'имя вашего персонажа: {Person(message.from_user.id).Name()}')
+        await message.answer(text=f'имя вашего персонажа: {Person(message.from_user.id).Name()}', reply_markup=keyboards.users_board.second)
 
     if message.text == 'Мой персонаж👤':
         pers = Person(message.from_user.id)

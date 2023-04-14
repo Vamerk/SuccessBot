@@ -1,5 +1,6 @@
 import sqlite3
 
+
 async def on_startup(dp):
     print('all ok')
 
@@ -22,6 +23,23 @@ else:
                health INTEGER DEFAULT 0, 
                stamina INTEGER DEFAULT 0, 
                level INTEGER DEFAULT 0
+               )
+    """)
+    con.commit()
+
+c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='events'")
+if c.fetchall() != []:
+    c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='events'")
+    print(c.fetchall())
+else:
+    cur.execute("""
+        CREATE TABLE events (
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               user_id INTEGER DEFAULT 0,
+               user_name TEXT DEFAULT "",
+               name TEXT DEFAULT "",
+               discription TEXT DEFAULT "",
+               point INTEGER DEFAULT 0
                )
     """)
     con.commit()

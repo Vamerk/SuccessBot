@@ -1,5 +1,5 @@
-from .start_command import dp
-from .get_person import dp
-from .about_person import dp
+from .admin import dp
+from .users import dp
+
 
 __all__ = ["dp"]

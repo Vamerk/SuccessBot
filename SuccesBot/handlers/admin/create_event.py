@@ -63,7 +63,10 @@ async def process_event_points(message: types.Message, state: FSMContext):
     event_discription = data.get("event_discription")
     event_points = message.text
 
-    await message.answer('Событие создано')
+    await message.answer(f"Событие создано\n\n"
+                         f"Название: {event_name}\n"
+                         f"Описание: {event_discription}\n"
+                         f"Очки: {event_points}")
     # Записываем событие в БД
     c = cur.execute("INSERT INTO events (name, discription, point) VALUES (?, ?, ?)",
                     (event_name, event_discription, event_points,))
@@ -85,12 +88,12 @@ async def process_event_points(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(lambda call: call.data == "go_in_event")
 async def process_callback_go_in_event(cq: types.CallbackQuery):
     # Event().Update_winners(cq.from_user.id)
-    await bot.send_message(admin_id, text=f'User: {cq.from_user.username}\n'
+    await bot.send_message(admin_id, text=f'User: @{cq.from_user.username}\n'
                                           f'User_id: {cq.from_user.id}\n'
                                           f'Говорит, что выполнил задание, надо проверить!', reply_markup=IsAccept)
 
     await bot.edit_message_text(chat_id=cq.message.chat.id, message_id=cq.message.message_id,
-                                text=f'Пользователь {cq.from_user.username} выполнил задание\n'
+                                text=f'Пользователь @{cq.from_user.username} выполнил задание\n'
                                      f'Администратор проверит это в ближайшее время')
 
     cur.execute(f"UPDATE events SET user_id = ? WHERE id = (SELECT MAX(id) FROM events)", (cq.from_user.id,))
@@ -100,8 +103,18 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
 
 @dp.callback_query_handler(lambda call: call.data == "is_accept")
 async def process_callback_is_accept(cq: types.CallbackQuery):
-    # cur.execute("SELECT user_id FROM events ORDER BY id DESC LIMIT 1")
-    # idu = cur.fetchone()
     ev = Event()
-    await bot.send_message(chat_id=company_chat_id, text=f'Пользователь {ev.event_user_id()} получает {ev.event_point()} очков ')
+    await bot.send_message(chat_id=company_chat_id, text=f'Пользователь @{Person(ev.event_user_id()).Username()} получает {ev.event_point()} очков ')
     Person(ev.event_user_id()).Update_point(ev.event_user_id(), ev.event_point())
+
+
+@dp.callback_query_handler(lambda call: call.data == "is_not_accept")
+async def process_callback_is_accept(cq: types.CallbackQuery):
+    ev = Event()
+    await bot.send_message(chat_id=company_chat_id,
+                           text=f'Пользователь @{Person(ev.event_user_id()).Username()} теряет {ev.event_point()} очков, так как не выполнил задание')
+    Person(ev.event_user_id()).Update_point(ev.event_user_id(), -ev.event_point())
+    await bot.send_message(chat_id=-991197527, text=f"Новое событие\n\n"
+                                                    f"Название: {ev.event_name()}\n"
+                                                    f"Описание: {ev.event_discription()}\n"
+                                                    f"Очки: {ev.event_point()}", reply_markup=Go_in_event)

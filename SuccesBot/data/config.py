@@ -1,3 +1,3 @@
-TOKEN = ''
+TOKEN = '6256715067:AAHqrwTzE79Vg5WtqP1wZJ1pDsDl414FKCI'
 company_chat_id = -991197527
 admin_id = 1103521706

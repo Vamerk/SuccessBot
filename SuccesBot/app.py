@@ -23,7 +23,8 @@ else:
                class INTEGER DEFAULT 1, 
                health INTEGER DEFAULT 0, 
                stamina INTEGER DEFAULT 0, 
-               level INTEGER DEFAULT 0
+               level INTEGER DEFAULT 0,
+               exp INTEGER DEFAULT 0
                )
     """)
     con.commit()

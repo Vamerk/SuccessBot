@@ -48,7 +48,7 @@ async def top_users(message: types.Message):
     text = Top_list.rating()
     await bot.send_photo(message.chat.id, photo=open(f'Image/top_users.jpg', 'rb'),
                          caption=f'*🔝Топ пользователей🔝*\n\n'
-                                 f'{text}', parse_mode="MarkDownV2")
+                                 f'{text}', parse_mode="markdown")
 
 
 @dp.message_handler(commands=['help'])
@@ -69,17 +69,18 @@ async def top_users(message: types.Message):
     if message.get_args():
         args = message.get_args()
         if not check_and_add_user(con, args, 0):
-            pers = Person(args)
+            pers = Person(int(args))
             cur.execute("""INSERT INTO PvP (id_attacker, id_deffender) VALUES (?, ?)""",
                         (message.from_user.id, args,))
             con.commit()
             await bot.send_photo(message.chat.id,
                                  photo=open(f'Person_image/user_image/user-{args}.png', 'rb'),
-                                 caption=f'Имя: {pers.Name()}\n'
-                                         f'Деньги: {pers.Money()}\n'
-                                         f'Здоровье: {pers.Health()}\n'
-                                         f'Сила: {pers.Stamina()}\n'
-                                         f'Уровень: {pers.Level()}\n', reply_markup=Interaction)
+                                 caption=f'👨‍💻Имя: {pers.Name()}\n'
+                                         f'💰Деньги: {pers.Money()}\n'
+                                         f'💊Здоровье: {pers.Health()}\n'
+                                         f'💪Сила: {pers.Stamina()}\n'
+                                         f'👾Уровень: {pers.Level()}\n'
+                                         f'Опыт: {pers.Exp()}', reply_markup=Interaction)
 
 
         else:
@@ -90,19 +91,22 @@ async def top_users(message: types.Message):
         pers = Person(message.from_user.id)
         await bot.send_photo(message.chat.id,
                              photo=open(f'Person_image/user_image/user-{message.from_user.id}.png', 'rb'),
-                             caption=f'Имя: {pers.Name()}\n'
-                                     f'Деньги: {pers.Money()}\n'
-                                     f'Здоровье: {pers.Health()}\n'
-                                     f'Сила: {pers.Stamina()}\n'
-                                     f'Уровень: {pers.Level()}\n', reply_markup=Pumping)
+                             caption=f'👨‍💻Имя: {pers.Name()}\n'
+                                     f'💰Деньги: {pers.Money()}\n'
+                                     f'💊Здоровье: {pers.Health()}\n'
+                                     f'💪Сила: {pers.Stamina()}\n'
+                                     f'👾Уровень: {pers.Level()}\n'
+                                     f'Опыт: {pers.Exp()}', reply_markup=Pumping)
 
 
 @dp.callback_query_handler(lambda call: call.data == "attack_on_user")
 async def process_callback_go_in_event(cq: types.CallbackQuery):
-    await bot.send_message(chat_id=company_chat_id,
-                           text=f'Начинается битва между @{Person(PvP().attacking_user()).Username()} и @{Person(PvP().defender_user()).Username()}')
+    random_k = random.uniform(0.10, 0.65)
     attack, defend = Person(PvP().attacking_user()), Person(PvP().defender_user())
     at_helth, def_helth = attack.Health(), defend.Health()
+
+    await bot.send_message(cq.message.chat.id,
+                           text=f'Начинается битва между @{attack.Username()} и @{defend.Username()}')
 
     i = 1
     while at_helth >= 0 and def_helth >= 0:
@@ -124,13 +128,27 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
         i += 1
         time.sleep(2)
 
-    if at_helth > 0 and def_helth <= 0:
-        await bot.send_message(cq.message.chat.id, text=f'Победа за @{attack.Username()}')
+    if at_helth > 0 and def_helth <= 0:  # Победил атакующий
+        await bot.send_message(cq.message.chat.id,
+                               text=f'Победа за @{attack.Username()}, он получает {round(defend.Money() * random_k)} очков и {round(10 * (random_k + 1))} опыта')
+        attack.Update_point(round(defend.Money() * random_k))
+        defend.Update_point(-round(defend.Money() * random_k))
+        attack.add_exp(round(10 * (random_k + 1)))
 
-    if def_helth > 0 and at_helth <= 0:
-        await bot.send_message(cq.message.chat.id, text=f'Победа за @{defend.Username()}')
+    if def_helth > 0 and at_helth <= 0:  # Победил защищающийся
+        await bot.send_message(cq.message.chat.id,
+                               text=f'Победа за @{defend.Username()}, он получает {round(attack.Money() * random_k)} очков и {round(10 * (random_k + 1))} опыта')
+        defend.Update_point(round(attack.Money() * random_k))
+        attack.Update_point(-round(attack.Money() * random_k))
+        defend.add_exp(round(10 * (random_k + 1)))
 
 
 @dp.callback_query_handler(lambda call: call.data == "share_points_with_user")
 async def process_callback_go_in_event(cq: types.CallbackQuery):
-    pass
+    sender = Person(PvP().attacking_user())
+    address = Person(PvP().defender_user())
+    random_k = random.uniform(0.05, 0.15)
+    await bot.send_message(cq.message.chat.id,
+                           text=f'@{sender.Username()} отправил {round(sender.Money() * random_k)} очков @{address.Username()}')
+    sender.Update_point(-round(sender.Money() * random_k))
+    address.Update_point(round(sender.Money() * random_k))

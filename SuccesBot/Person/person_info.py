@@ -5,7 +5,8 @@ class Person():
     def __init__(self, user_id: int):
         con = sqlite3.connect('gamebase.db')
         cur = con.cursor()
-        cur.execute("SELECT name, money, class, health, stamina, level, username FROM gameinf WHERE id = ?", (user_id,))
+        self.user_id = user_id
+        cur.execute("SELECT name, money, class, health, stamina, level, username, exp FROM gameinf WHERE id = ?", (user_id,))
         self.inform_about_person = cur.fetchone()
         cur.close()
         con.close()
@@ -31,10 +32,21 @@ class Person():
     def Username(self):
         return self.inform_about_person[6]
 
-    def Update_point(self, user_id, event_point):
+    def Exp(self):
+        return self.inform_about_person[7]
+
+    def Update_point(self, event_point):
         con = sqlite3.connect('gamebase.db')
         cur = con.cursor()
-        cur.execute(f"UPDATE gameinf SET money=money+{event_point} WHERE id=?", (user_id,))
+        cur.execute(f"UPDATE gameinf SET money=money+{event_point} WHERE id=?", (self.user_id,))
+        con.commit()
+        cur.close()
+        con.close()
+
+    def add_exp(self, get_exp):
+        con = sqlite3.connect('gamebase.db')
+        cur = con.cursor()
+        cur.execute(f"UPDATE gameinf SET exp=exp+{get_exp} WHERE id=?", (self.user_id,))
         con.commit()
         cur.close()
         con.close()

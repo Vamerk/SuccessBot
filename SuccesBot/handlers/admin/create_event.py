@@ -104,17 +104,20 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
 @dp.callback_query_handler(lambda call: call.data == "is_accept")
 async def process_callback_is_accept(cq: types.CallbackQuery):
     ev = Event()
-    await bot.send_message(chat_id=company_chat_id, text=f'Пользователь @{Person(ev.event_user_id()).Username()} получает {ev.event_point()} очков ')
-    Person(ev.event_user_id()).Update_point(ev.event_user_id(), ev.event_point())
+    pers = Person(ev.event_user_id())
+    await bot.send_message(chat_id=company_chat_id, text=f'Пользователь @{pers.Username()} получает {ev.event_point()} очков ')
+    pers.Update_point(ev.event_point())
+    pers.add_exp(10)
 
 
 @dp.callback_query_handler(lambda call: call.data == "is_not_accept")
 async def process_callback_is_accept(cq: types.CallbackQuery):
     ev = Event()
+    pers = Person(ev.event_user_id())
     await bot.send_message(chat_id=company_chat_id,
-                           text=f'Пользователь @{Person(ev.event_user_id()).Username()} теряет {ev.event_point()} очков, так как не выполнил задание')
-    Person(ev.event_user_id()).Update_point(ev.event_user_id(), -ev.event_point())
-    await bot.send_message(chat_id=-991197527, text=f"Новое событие\n\n"
+                           text=f'Пользователь @{pers.Username()} теряет {ev.event_point()} очков, так как не выполнил задание')
+    pers.Update_point(-ev.event_point())
+    await bot.send_message(chat_id=company_chat_id, text=f"Новое событие\n\n"
                                                     f"Название: {ev.event_name()}\n"
                                                     f"Описание: {ev.event_discription()}\n"
                                                     f"Очки: {ev.event_point()}", reply_markup=Go_in_event)

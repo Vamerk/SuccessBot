@@ -19,11 +19,12 @@ async def dd_message(message: types.Message):
         pers = Person(message.from_user.id)
         await bot.send_photo(message.chat.id,
                              photo=open(f'Person_image/user_image/user-{message.from_user.id}.png', 'rb'),
-                             caption=f'Имя: {pers.Name()}\n'
-                                     f'Деньги: {pers.Money()}\n'
-                                     f'Здоровье: {pers.Health()}\n'
-                                     f'Сила: {pers.Stamina()}\n'
-                                     f'Уровень: {pers.Level()}\n', reply_markup=types.ReplyKeyboardRemove())
+                             caption=f'👨‍💻Имя: {pers.Name()}\n'
+                                     f'💰Деньги: {pers.Money()}\n'
+                                     f'💊Здоровье: {pers.Health()}\n'
+                                     f'💪Сила: {pers.Stamina()}\n'
+                                     f'👾Уровень: {pers.Level()}\n'
+                                     f'Опыт: {pers.Exp()}', reply_markup=types.ReplyKeyboardRemove())
 
     if message.text == '@BotOfSuccess_bot Инвентарь':
         inv = Inventory(message.from_user.id)

@@ -33,3 +33,9 @@ Pumping = InlineKeyboardMarkup(row_width=1)
 Inventory = InlineKeyboardButton('Инвентарь', switch_inline_query_current_chat='Инвентарь')
 Up_Level = InlineKeyboardButton('Повысить уровень', switch_inline_query_current_chat='Повысить уровень')
 Pumping.add(Inventory, Up_Level)
+
+#------------------------------------------------------Кнопки инвентаря
+Inventory_menu =InlineKeyboardMarkup(row_width=1)
+open_lootbox_s = InlineKeyboardButton('Открыть лутбокс', switch_inline_query_current_chat='Открыть лутбокс')
+open_lootbox_p = InlineKeyboardButton('Открыть премиум лутбокс', switch_inline_query_current_chat='Открыть премиум лутбокс')
+Inventory_menu.add(open_lootbox_s, open_lootbox_p)

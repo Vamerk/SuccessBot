@@ -67,8 +67,8 @@ else:
                id INTEGER PRIMARY KEY,
                gantel INTEGER DEFAULT 0,
                cross NUMERIC DEFAULT 0,
-               remen INTEGER DEFAULT 0,
-               undp INTEGER DEFAULT 0,
+               remen NUMERIC DEFAULT 0,
+               undp NUMERIC DEFAULT 0,
                lootboxs_s INTEGER DEFAULT 0,
                lootboxs_p INTEGER DEFAULT 0
                )""")

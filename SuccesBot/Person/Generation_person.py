@@ -39,5 +39,5 @@ class NewPerson():
         person_img.paste(undp_img, (0, 0), mask=undp_img)
 
         person_img.save(f'Person_image/user_image/user-{user_id}.png')
-        print('ok')
+        print('Создан персонаж')
 

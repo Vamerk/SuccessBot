@@ -8,6 +8,7 @@ from aiogram.dispatcher import filters
 import logging
 
 from Person import Person
+from other import send_lootbox
 import loader
 
 from other import Event
@@ -92,7 +93,7 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
                                           f'User_id: {cq.from_user.id}\n'
                                           f'Говорит, что выполнил задание, надо проверить!', reply_markup=IsAccept)
 
-    await bot.edit_message_text(chat_id=cq.message.chat.id, message_id=cq.message.message_id,
+    await bot.edit_message_text(chat_id=company_chat_id, message_id=cq.message.message_id,
                                 text=f'Пользователь @{cq.from_user.username} выполнил задание\n'
                                      f'Администратор проверит это в ближайшее время')
 
@@ -105,7 +106,8 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
 async def process_callback_is_accept(cq: types.CallbackQuery):
     ev = Event()
     pers = Person(ev.event_user_id())
-    await bot.send_message(chat_id=company_chat_id, text=f'Пользователь @{pers.Username()} получает {ev.event_point()} очков ')
+    if int(await send_lootbox(ev.event_user_id())) > 0: await bot.send_message(company_chat_id, text=f'Выпал лутбокс!!')
+    await bot.send_message(company_chat_id, text=f'Пользователь @{pers.Username()} получает {ev.event_point()} очков ')
     pers.Update_point(ev.event_point())
     pers.add_exp(10)
 
@@ -114,10 +116,10 @@ async def process_callback_is_accept(cq: types.CallbackQuery):
 async def process_callback_is_accept(cq: types.CallbackQuery):
     ev = Event()
     pers = Person(ev.event_user_id())
-    await bot.send_message(chat_id=company_chat_id,
+    await bot.send_message(cq.message.chat.id,
                            text=f'Пользователь @{pers.Username()} теряет {ev.event_point()} очков, так как не выполнил задание')
     pers.Update_point(-ev.event_point())
-    await bot.send_message(chat_id=company_chat_id, text=f"Новое событие\n\n"
+    await bot.send_message(cq.message.chat.id, text=f"Новое событие\n\n"
                                                     f"Название: {ev.event_name()}\n"
                                                     f"Описание: {ev.event_discription()}\n"
                                                     f"Очки: {ev.event_point()}", reply_markup=Go_in_event)

@@ -8,6 +8,7 @@ from Person import Top_list
 from loader import dp, bot
 from Person import Person, PvP, Inventory
 from data.config import company_chat_id
+from other import send_lootbox
 
 
 def check_and_add_user(conn, user_id, username=0):
@@ -111,8 +112,8 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
     i = 1
     while at_helth >= 0 and def_helth >= 0:
         at_damage, def_damage = attack.Stamina(), defend.Stamina()
-        at_damage = round(at_damage * random.uniform(0.75, 1.25), 2)
-        def_damage = round(def_damage * random.uniform(0.75, 1.25), 2)
+        at_damage = round(at_damage * random.uniform(0.70, 1.30), 2)
+        def_damage = round(def_damage * random.uniform(0.70, 1.30), 2)
         if i % 2 != 0:  # Удары атакующего
             def_helth -= at_damage
             await bot.send_message(cq.message.chat.id, text=f'{i} Удар\n'
@@ -131,17 +132,24 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
     if at_helth > 0 and def_helth <= 0:  # Победил атакующий
         await bot.send_message(cq.message.chat.id,
                                text=f'Победа за @{attack.Username()}, он получает {round(defend.Money() * random_k)} очков и {round(10 * (random_k + 1))} опыта')
+        # Обновление данных БД
         attack.Update_point(round(defend.Money() * random_k))
         defend.Update_point(-round(defend.Money() * random_k))
         attack.add_exp(round(10 * (random_k + 1)))
+        defend.add_exp(round(2))
+        if int(await send_lootbox(attack.user_id)) > 0: await bot.send_message(cq.message.chat.id, text=f'Выпал лутбокс!!')
 
     if def_helth > 0 and at_helth <= 0:  # Победил защищающийся
         await bot.send_message(cq.message.chat.id,
                                text=f'Победа за @{defend.Username()}, он получает {round(attack.Money() * random_k)} очков и {round(10 * (random_k + 1))} опыта')
+        # Обновление данных БД
         defend.Update_point(round(attack.Money() * random_k))
         attack.Update_point(-round(attack.Money() * random_k))
         defend.add_exp(round(10 * (random_k + 1)))
+        attack.add_exp(round(2))
+        if int(await send_lootbox(attack.user_id)) > 0: await bot.send_message(cq.message.chat.id, text=f'Выпал лутбокс!!')
 
+    PvP().end_battle()
 
 @dp.callback_query_handler(lambda call: call.data == "share_points_with_user")
 async def process_callback_go_in_event(cq: types.CallbackQuery):

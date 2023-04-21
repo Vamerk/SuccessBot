@@ -50,3 +50,11 @@ class Person():
         con.commit()
         cur.close()
         con.close()
+
+    def LevelUp(self):
+        con = sqlite3.connect('gamebase.db')
+        cur = con.cursor()
+        cur.execute(f"UPDATE gameinf SET exp=0, level=level+1, health=health+5, stamina=stamina+2.5 WHERE id=?", (self.user_id,))
+        con.commit()
+        cur.close()
+        con.close()

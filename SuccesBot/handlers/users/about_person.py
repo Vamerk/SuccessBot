@@ -36,6 +36,13 @@ async def dd_message(message: types.Message):
                                                      f'Обычный лутбокс: {inv.lootboxs_s()}\n'
                                                      f'Премиальный лутбокс: {inv.lootboxs_p()}\n', reply_markup=Inventory_menu)
 
+    if message.text == '@BotOfSuccess_bot Повысить уровень':
+        pers = Person(message.from_user.id)
+        if pers.Exp() >= pers.Level() * 10:
+            pers.LevelUp()
+            await bot.send_message(message.chat.id, text=f'Уровень повышен, теперь ваш персонаж {pers.Level()+1} уровня')
+        else: await bot.send_message(message.chat.id, text=f'Не хватает опыта')
+
     if message.text == '@BotOfSuccess_bot Открыть лутбокс':
         if int(Inventory(message.from_user.id).lootboxs_s()) >= 1:
             await bot.send_message(message.chat.id, text=f'Вам выпадает:\n{open_standart_lootbox(message.from_user.id)}')

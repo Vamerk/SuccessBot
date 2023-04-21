@@ -29,6 +29,8 @@ async def send_lootbox(user_id):
 def open_standart_lootbox(user_id):
     con = sqlite3.connect('gamebase.db')
     cur = con.cursor()
+    cur.execute(f"UPDATE inventory SET lootboxs_s=lootboxs_s-1 WHERE id=?", (user_id,))
+    con.commit()
 
     invent = Inventory(user_id)
 
@@ -54,7 +56,7 @@ def open_standart_lootbox(user_id):
     loot = random.choices(preloot, weights=ves)[0]
 
     if loot == gantel:
-        cur.execute(f"UPDATE inventory SET gantel=gantel+{loot}, lootboxs_s=lootboxs_s WHERE id=?", (user_id,))
+        cur.execute(f"UPDATE inventory SET gantel=gantel+{loot} WHERE id=?", (user_id,))
         cur.execute(f"UPDATE gameinf SET stamina=stamina+{loot * 0.05} WHERE id=?", (user_id,))
         con.commit()
         return f'{loot} гантелей'
@@ -90,7 +92,8 @@ def open_standart_lootbox(user_id):
 def open_premium_lootbox(user_id):
     con = sqlite3.connect('gamebase.db')
     cur = con.cursor()
-
+    cur.execute(f"UPDATE inventory SET lootboxs_p=lootboxs_p-1 WHERE id=?", (user_id,))
+    con.commit()
     invent = Inventory(user_id)
 
     pers = Person(user_id)
@@ -116,7 +119,7 @@ def open_premium_lootbox(user_id):
 
 
     if loot == gantel:
-        cur.execute(f"UPDATE inventory SET gantel=gantel+{loot}, lootboxs_s=lootboxs_s WHERE id=?", (user_id,))
+        cur.execute(f"UPDATE inventory SET gantel=gantel+{loot} WHERE id=?", (user_id,))
         cur.execute(f"UPDATE gameinf SET stamina=stamina+{loot * 0.05} WHERE id=?", (user_id,))
         con.commit()
         return f'{loot} гантелей'

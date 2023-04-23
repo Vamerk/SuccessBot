@@ -1,5 +1,9 @@
 import sqlite3
+import sys
+import locale
 
+print(sys.getfilesystemencoding())
+print(locale.getpreferredencoding())
 
 async def on_startup(dp):
     print('all ok')
@@ -7,6 +11,7 @@ async def on_startup(dp):
 
 con = sqlite3.connect('gamebase.db')
 cur = con.cursor()
+
 
 c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='gameinf'")
 if c.fetchall() != []:

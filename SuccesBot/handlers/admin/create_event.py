@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 import sqlite3
 import random
+import time
 
 from aiogram.dispatcher import filters
 import logging
@@ -123,3 +124,11 @@ async def process_callback_is_accept(cq: types.CallbackQuery):
                                                     f"Название: {ev.event_name()}\n"
                                                     f"Описание: {ev.event_discription()}\n"
                                                     f"Очки: {ev.event_point()}", reply_markup=Go_in_event)
+
+
+#--------------------------------------------------------Евенты с большим количеством участников------------------------------
+
+
+
+
+

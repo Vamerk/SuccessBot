@@ -21,6 +21,8 @@ Is_not_accepted = InlineKeyboardButton(callback_data='is_not_accept', text='❌'
 IsAccept.add(Is_accepted, Is_not_accepted)
 
 
+
+
 #-------------------------------------------------PvP(типо)
 Interaction = InlineKeyboardMarkup(row_width=1)
 

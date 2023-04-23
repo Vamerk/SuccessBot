@@ -11,7 +11,7 @@ class NewPerson():
         con = sqlite3.connect('gamebase.db')
         cursor = con.cursor()
         cursor.execute(
-            f'UPDATE gameinf SET status = 1, name = "{random_Name}", money = 0, class = 1, health = 100, stamina = 25, level = 1 WHERE id = ?',
+            f'UPDATE gameinf SET status = 1, name = "{random_Name}", money = 100, class = 1, health = 100, stamina = 25, level = 1 WHERE id = ?',
             (user_id,))
         cursor.close()
         con.commit()

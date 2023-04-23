@@ -1,5 +1,5 @@
 from .command import dp
-from .about_person import dp
+from .nocommand import dp
 
 
 

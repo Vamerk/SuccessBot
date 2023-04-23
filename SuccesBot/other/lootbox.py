@@ -7,7 +7,7 @@ from Person import Inventory, Person
 
 async def send_lootbox(user_id):
     chance = random.randrange(0, 100)
-    if chance >= 1:
+    if chance >= 70:
         con = sqlite3.connect('gamebase.db')
         cur = con.cursor()
 

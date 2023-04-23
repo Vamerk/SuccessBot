@@ -77,11 +77,11 @@ async def top_users(message: types.Message):
             await bot.send_photo(message.chat.id,
                                  photo=open(f'Person_image/user_image/user-{args}.png', 'rb'),
                                  caption=f'👨‍💻Имя: {pers.Name()}\n'
-                                         f'💰Деньги: {pers.Money()}\n'
+                                         f'💰Очки: {pers.Money()}\n'
                                          f'💊Здоровье: {pers.Health()}\n'
                                          f'💪Сила: {pers.Stamina()}\n'
                                          f'👾Уровень: {pers.Level()}\n'
-                                         f'Опыт: {pers.Exp()}', reply_markup=Interaction)
+                                         f'⭐️Опыт: {pers.Exp()}', reply_markup=Interaction)
 
 
         else:
@@ -93,11 +93,11 @@ async def top_users(message: types.Message):
         await bot.send_photo(message.chat.id,
                              photo=open(f'Person_image/user_image/user-{message.from_user.id}.png', 'rb'),
                              caption=f'👨‍💻Имя: {pers.Name()}\n'
-                                     f'💰Деньги: {pers.Money()}\n'
+                                     f'💰Очки: {pers.Money()}\n'
                                      f'💊Здоровье: {pers.Health()}\n'
                                      f'💪Сила: {pers.Stamina()}\n'
                                      f'👾Уровень: {pers.Level()}\n'
-                                     f'Опыт: {pers.Exp()}', reply_markup=Pumping)
+                                     f'⭐️Опыт: {pers.Exp()}', reply_markup=Pumping)
 
 
 @dp.callback_query_handler(lambda call: call.data == "attack_on_user")
@@ -105,15 +105,15 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
     random_k = random.uniform(0.10, 0.65)
     attack, defend = Person(PvP().attacking_user()), Person(PvP().defender_user())
     at_helth, def_helth = attack.Health(), defend.Health()
-
-    await bot.send_message(cq.message.chat.id,
-                           text=f'Начинается битва между @{attack.Username()} и @{defend.Username()}')
+    await bot.send_animation(cq.message.chat.id, animation=open(f'Image/fight.gif', 'rb'),
+                             caption=f'Начинается битва между \n@{attack.Username()} и @{defend.Username()}')
 
     i = 1
     while at_helth >= 0 and def_helth >= 0:
         at_damage, def_damage = attack.Stamina(), defend.Stamina()
         at_damage = round(at_damage * random.uniform(0.70, 1.30), 2)
         def_damage = round(def_damage * random.uniform(0.70, 1.30), 2)
+        # ms_id = await bot.send_animation(cq.message.chat.id, animation=open(f'Image/open_lootbox.gif.mp4', 'rb'))
         if i % 2 != 0:  # Удары атакующего
             def_helth -= at_damage
             await bot.send_message(cq.message.chat.id, text=f'{i} Удар\n'
@@ -126,8 +126,10 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
                                                             f'@{defend.Username()} наносит {def_damage} @{attack.Username()}\n\n'
                                                             f'Здоровье @{attack.Username()} : {at_helth}\n'
                                                             f'Здоровье @{defend.Username()} : {def_helth}')
+        time.sleep(3)
+        await bot.delete_message(cq.message.chat.id, message_id=cq.message.message_id + i + 1)
         i += 1
-        time.sleep(2)
+
 
     if at_helth > 0 and def_helth <= 0:  # Победил атакующий
         await bot.send_message(cq.message.chat.id,
@@ -137,7 +139,8 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
         defend.Update_point(-round(defend.Money() * random_k))
         attack.add_exp(round(10 * (random_k + 1)))
         defend.add_exp(round(2))
-        if int(await send_lootbox(attack.user_id)) > 0: await bot.send_message(cq.message.chat.id, text=f'Выпал лутбокс!!')
+        if int(await send_lootbox(attack.user_id)) > 0: await bot.send_message(cq.message.chat.id,
+                                                                               text=f'🎉Выпал лутбокс!!')
 
     if def_helth > 0 and at_helth <= 0:  # Победил защищающийся
         await bot.send_message(cq.message.chat.id,
@@ -147,9 +150,11 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
         attack.Update_point(-round(attack.Money() * random_k))
         defend.add_exp(round(10 * (random_k + 1)))
         attack.add_exp(round(2))
-        if int(await send_lootbox(attack.user_id)) > 0: await bot.send_message(cq.message.chat.id, text=f'Выпал лутбокс!!')
+        if int(await send_lootbox(attack.user_id)) > 0: await bot.send_message(cq.message.chat.id,
+                                                                               text=f'🎉Выпал лутбокс!!')
 
     PvP().end_battle()
+
 
 @dp.callback_query_handler(lambda call: call.data == "share_points_with_user")
 async def process_callback_go_in_event(cq: types.CallbackQuery):

@@ -2,7 +2,7 @@ import sqlite3
 
 class Inventory:
     def __init__(self, user_id: int):
-        con = sqlite3.connect('gamebase.db')
+        con = sqlite3.connect('gamebase.db', timeout=10)
         cur = con.cursor()
         cur.execute("SELECT gantel, cross, remen, undp, lootboxs_s, lootboxs_p FROM inventory WHERE id = ?", (user_id,))
         self.inventory_info = cur.fetchone()

@@ -8,13 +8,13 @@ name = open('data/Names.txt').readlines()
 class NewPerson():
     def __init__(self, user_id):
         random_Name = name[random.randint(1, 363)]
-        con = sqlite3.connect('gamebase.db')
+        con = sqlite3.connect('gamebase.db', timeout=10)
         cursor = con.cursor()
         cursor.execute(
             f'UPDATE gameinf SET status = 1, name = "{random_Name}", money = 100, class = 1, health = 100, stamina = 25, level = 1 WHERE id = ?',
             (user_id,))
-        cursor.close()
         con.commit()
+        cursor.close()
         con.close()
 
         path = 'Person_image/generate_image'

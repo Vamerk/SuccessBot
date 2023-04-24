@@ -8,7 +8,7 @@ from Person import Inventory, Person
 async def send_lootbox(user_id):
     chance = random.randrange(0, 100)
     if chance >= 70:
-        con = sqlite3.connect('gamebase.db')
+        con = sqlite3.connect('gamebase.db', timeout=10)
         cur = con.cursor()
 
         lootbox_type_chance = random.randrange(0, 100)

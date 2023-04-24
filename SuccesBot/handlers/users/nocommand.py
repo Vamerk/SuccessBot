@@ -28,7 +28,7 @@ async def dd_message(message: types.Message):
                                      f'👾Уровень: {pers.Level()}\n'
                                      f'⭐️Опыт: {pers.Exp()}', reply_markup=types.ReplyKeyboardRemove())
 
-    if  'Инвентарь' in message.text:
+    if 'Инвентарь' in message.text:
         inv = Inventory(message.from_user.id)
         await bot.send_message(message.chat.id, text=f'🏋‍♂Гантели: {inv.gantel()}\n'
                                                      f'👟Кроссовки: {inv.sneakers()}\n'

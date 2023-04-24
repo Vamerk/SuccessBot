@@ -11,6 +11,7 @@ from data.config import company_chat_id
 from other import send_lootbox
 
 
+# Проверка существования пользователя в базе данных
 def check_and_add_user(conn, user_id, username=0):
     isExists = False
     cursor = conn.cursor()
@@ -24,6 +25,7 @@ def check_and_add_user(conn, user_id, username=0):
     return isExists
 
 
+# Добавление инвентаря пользователю
 def add_inventory(conn, user_id):
     cursor = conn.cursor()
     cursor.execute("SELECT id FROM inventory WHERE id = ?", (user_id,))
@@ -67,6 +69,7 @@ async def top_users(message: types.Message):
 
 @dp.message_handler(commands=['info'])
 async def top_users(message: types.Message):
+    # Проверка наличия аргумента, если он присутствует, то выводим информацию по пользователю с введеным айди
     if message.get_args():
         args = message.get_args()
         if not check_and_add_user(con, args, 0):
@@ -87,7 +90,7 @@ async def top_users(message: types.Message):
         else:
             await bot.send_message(message.chat.id,
                                    text=f'Такого у нас нет, возможно вы ошиблись. Попробуйте ввести другой ID')
-
+    # Если аргумента нет, то выводим информацию о пользователе ввевшем команду
     else:
         pers = Person(message.from_user.id)
         await bot.send_photo(message.chat.id,
@@ -99,7 +102,7 @@ async def top_users(message: types.Message):
                                      f'👾Уровень: {pers.Level()}\n'
                                      f'⭐️Опыт: {pers.Exp()}', reply_markup=Pumping)
 
-
+# Атаковать пользователя
 @dp.callback_query_handler(lambda call: call.data == "attack_on_user")
 async def process_callback_go_in_event(cq: types.CallbackQuery):
     random_k = random.uniform(0.10, 0.65)
@@ -148,12 +151,12 @@ async def process_callback_go_in_event(cq: types.CallbackQuery):
         attack.Update_point(-round(attack.Money() * random_k))
         defend.add_exp(round(10 * (random_k + 1)))
         attack.add_exp(round(2))
-        if int(await send_lootbox(attack.user_id)) > 0: await bot.send_message(cq.message.chat.id,
-                                                                               text=f'🎉Выпал лутбокс!!')
+        if int(await send_lootbox(attack.user_id)) > 0:
+            await bot.send_message(cq.message.chat.id, text=f'🎉Выпал лутбокс!!')
 
     PvP().end_battle()
 
-
+# Поделиться очками
 @dp.callback_query_handler(lambda call: call.data == "share_points_with_user")
 async def process_callback_go_in_event(cq: types.CallbackQuery):
     sender = Person(PvP().attacking_user())

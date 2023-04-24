@@ -5,7 +5,7 @@ emodji = '😎🙈😅🤗🫡😵‍👽🐵🌚🗿😂😇🤪🧐🤨🤩�
 
 def rating():
     text = ''
-    conn = sqlite3.connect('gamebase.db')
+    conn = sqlite3.connect('gamebase.db', timeout=10)
     cursor = conn.cursor()
     cursor.execute('SELECT id, money FROM gameinf ORDER BY money DESC LIMIT 10')
     result = cursor.fetchall()

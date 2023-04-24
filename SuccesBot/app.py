@@ -1,22 +1,16 @@
 import sqlite3
-import sys
-import locale
 
-print(sys.getfilesystemencoding())
-print(locale.getpreferredencoding())
 
 async def on_startup(dp):
     print('all ok')
 
 
-con = sqlite3.connect('gamebase.db')
+con = sqlite3.connect('gamebase.db', timeout=10)
 cur = con.cursor()
-
 
 c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='gameinf'")
 if c.fetchall() != []:
     c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='gameinf'")
-    print(c.fetchall())
 else:
     cur.execute("""
         CREATE TABLE gameinf (
@@ -37,7 +31,6 @@ else:
 c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='events'")
 if c.fetchall() != []:
     c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='events'")
-    print(c.fetchall())
 else:
     cur.execute("""
         CREATE TABLE events (
@@ -53,7 +46,6 @@ else:
 c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='PvP'")
 if c.fetchall() != []:
     c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='PvP'")
-    print(c.fetchall())
 else:
     cur.execute("""
         CREATE TABLE PvP (
@@ -65,7 +57,6 @@ else:
 c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='inventory'")
 if c.fetchall() != []:
     c = cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='inventory'")
-    print(c.fetchall())
 else:
     cur.execute("""
         CREATE TABLE inventory (
@@ -78,6 +69,7 @@ else:
                lootboxs_p INTEGER DEFAULT 0
                )""")
     con.commit()
+
 
 if __name__ == '__main__':
     from aiogram import executor

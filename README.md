@@ -1,5 +1,4 @@
 # Команда - zxcode
-# https://t.me/+11T0uYLeNg41ODAy  - Ссылка на тестовый чат(можете проверять работу бота в нем)  https://t.me/BotOfSuccess_bot - Бот
 
 1) Установить через pip следующие пакеты:
     aiogram==2.10.1    -   pip install aiogram
